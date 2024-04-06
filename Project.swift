@@ -5,21 +5,15 @@ let project = Project(
     targets: [
         .target(
             name: "Context",
-            destinations: .iOS,
-            product: .app,
+            destinations: [.mac, .iPad, .iPhone, .appleTv, .appleWatch, .appleVision, .appleVisionWithiPadDesign],
+            product: .staticFramework,
             bundleId: "io.tuist.Context",
-            infoPlist: .extendingDefault(
-                with: [
-                    "UILaunchStoryboardName": "LaunchScreen.storyboard",
-                ]
-            ),
             sources: ["Context/Sources/**"],
-            resources: ["Context/Resources/**"],
             dependencies: []
         ),
         .target(
             name: "ContextTests",
-            destinations: .iOS,
+            destinations: [.mac, .iPad, .iPhone, .appleTv, .appleWatch, .appleVision, .appleVisionWithiPadDesign],
             product: .unitTests,
             bundleId: "io.tuist.ContextTests",
             infoPlist: .default,
