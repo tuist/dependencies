@@ -1,25 +1,27 @@
 import ProjectDescription
 
 let project = Project(
-    name: "Context",
+    name: "Dependencies",
     targets: [
         .target(
-            name: "Context",
+            name: "Dependencies",
             destinations: [.mac, .iPad, .iPhone, .appleTv, .appleWatch, .appleVision, .appleVisionWithiPadDesign],
             product: .staticFramework,
-            bundleId: "io.tuist.Context",
-            sources: ["Context/Sources/**"],
+            bundleId: "io.tuist.Dependencies",
+            deploymentTargets: .multiplatform(macOS: "14.2"),
+            sources: ["Sources/Dependencies/**"],
             dependencies: []
         ),
         .target(
-            name: "ContextTests",
+            name: "DependenciesTests",
             destinations: [.mac, .iPad, .iPhone, .appleTv, .appleWatch, .appleVision, .appleVisionWithiPadDesign],
             product: .unitTests,
-            bundleId: "io.tuist.ContextTests",
+            bundleId: "io.tuist.DependenciesTests",
+            deploymentTargets: .multiplatform(macOS: "14.2"),
             infoPlist: .default,
-            sources: ["Context/Tests/**"],
+            sources: ["Tests/DependenciesTests/**"],
             resources: [],
-            dependencies: [.target(name: "Context")]
+            dependencies: [.target(name: "Dependencies")]
         ),
     ]
 )
