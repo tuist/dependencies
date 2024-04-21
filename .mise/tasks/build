@@ -1,0 +1,6 @@
+#!/bin/bash
+# mise description="Build the project using Tuist"
+set -euo pipefail
+
+tuist generate --path $MISE_PROJECT_ROOT --no-open
+xcodebuild -workspace $MISE_PROJECT_ROOT/Dependencies.xcworkspace -scheme Dependencies -destination 'generic/platform=iOS' -destination 'generic/platform=macOS' | xcbeautify
