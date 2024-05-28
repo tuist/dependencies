@@ -7,7 +7,7 @@ public enum DependencyType {
 }
 
 private extension DependencyType {
-    func factory<T>(factory: @escaping (DependenciesResolver) async throws -> T) ->  DependencyFactory {
+    func factory<T: Sendable>(factory: @Sendable @escaping (DependenciesResolver) async throws -> T) ->  DependencyFactory {
         switch self {
         case .multi:
             return .multi(factory)
@@ -18,8 +18,8 @@ private extension DependencyType {
 }
 
 enum DependencyFactory {
-    case single((DependenciesResolver) async throws -> Any)
-    case multi((DependenciesResolver) async throws -> Any)
+    case single(@Sendable (DependenciesResolver) async throws -> Sendable)
+    case multi(@Sendable (DependenciesResolver) async throws -> Sendable)
 }
 
 public enum DependenciesError: Error, CustomStringConvertible {
@@ -48,7 +48,7 @@ public actor DependenciesResolver {
         self.dependencyChain = dependencyChain
     }
     
-    public func resolve<T>(_ type: T.Type) async throws -> T {
+    public func resolve<T: Sendable>(_ type: T.Type) async throws -> T {
         var dependencyChain = dependencyChain
         dependencyChain.append(String(describing: type))
         if let _ = dependencyChain.anyDuplicate() {
@@ -67,9 +67,9 @@ public actor Dependencies {
      is respected.
      */
     private var factories: [ObjectIdentifier: DependencyFactory] = [:]
-    private var singleDependencies: [ObjectIdentifier: Any] = [:]
+    private var singleDependencies: [ObjectIdentifier: any Sendable] = [:]
     
-    public func register<T>(_ type: DependencyType = .single, _ factory: @escaping (DependenciesResolver) async throws -> T) throws {
+    public func register<T: Sendable>(_ type: DependencyType = .single, _ factory: @Sendable @escaping (DependenciesResolver) async throws -> T) throws {
         let identifier = ObjectIdentifier(T.self)
 
         if factories[identifier] != nil {
@@ -79,11 +79,11 @@ public actor Dependencies {
         factories[identifier] = type.factory(factory: factory)
     }
     
-    public func dependency<T>(_ type: T.Type) async throws -> T {
+    public func dependency<T: Sendable>(_ type: T.Type) async throws -> T {
         try await dependency(T.self, dependencyChain: [])
     }
     
-    fileprivate func dependency<T>(_ type: T.Type, dependencyChain: [String]) async throws -> T {
+    fileprivate func dependency<T: Sendable>(_ type: T.Type, dependencyChain: [String]) async throws -> T {
         let identifier = ObjectIdentifier(T.self)
 
         guard let factory = factories[identifier] else {
