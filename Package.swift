@@ -18,7 +18,10 @@ let package = Package(
     targets: [
         .target(
             name: "Dependencies",
-            dependencies: []
+            dependencies: [],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
         ),
         .testTarget(
             name: "DependenciesTests",
